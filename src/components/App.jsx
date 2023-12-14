@@ -13,68 +13,31 @@ export class App extends Component {
     page: 1,
     isShowModal: false,
     largeImageURL: '',
+    isShowButton: true,
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(_, prevState) {
     if (
       prevState.searchText !== this.state.searchText ||
       prevState.page !== this.state.page
     ) {
-      if (this.page === 1) {
-        this.setState({ images: [] });
-      } else {
-        this.setState({ isLoading: true });
-        getImages(this.state.searchText, this.state.page)
-          .then(response => response.json())
-          .then(data =>
-            this.setState(prev => ({
-              images: prev.images ? [...prev.images, ...data.hits] : data.hits,
-              page: 1,
-              // images: [...prev.images, ...data.hits],
-            }))
-          )
-          .catch(error => {
-            console.log('my error', error);
-          })
-          .finally(() => {
-            this.setState({ isLoading: false });
-          });
-      }
+      this.setState({ isLoading: true });
+      getImages(this.state.searchText, this.state.page)
+        .then(response => response.json())
+        .then(data =>
+          this.setState(prev => ({
+            images: prev.images ? [...prev.images, ...data.hits] : data.hits,
+            isShowButton: prev.page < data.totalHits / 12,
+          }))
+        )
+        .catch(error => {
+          console.log('my error', error);
+        })
+        .finally(() => {
+          this.setState({ isLoading: false });
+        });
     }
-
-    //   if (prevState.searchText !== this.state.searchText) {
-    //     this.setState({ isLoading: true });
-    //     getImages(this.state.searchText, this.state.page)
-    //       .then(response => response.json())
-    //       .then(data => this.setState({ images: data.hits, page: 1 }))
-    //       .catch(error => {
-    //         console.log('my error', error);
-    //       })
-    //       .finally(() => {
-    //         this.setState({ isLoading: false });
-    //       });
-    //   }
-
-    //   if (prevState.page !== this.state.page) {
-    //     this.setState({ isLoading: true });
-    //     getImages(this.state.searchText, this.state.page)
-    //       .then(response => response.json())
-    //       .then(data =>
-    //         this.setState(prev => ({
-    //           images: prev.images ? [...prev.images, ...data.hits] : data.hits,
-    //           // images: [...prev.images, ...data.hits],
-    //         }))
-    //       )
-    //       .catch(error => {
-    //         console.log('my error', error);
-    //       })
-    //       .finally(() => {
-    //         this.setState({ isLoading: false });
-    //       });
-    //   }
   }
-
-  // prevState.page !== this.state.page
 
   handleFormSubmit = searchText => {
     this.setState({ images: [], searchText, page: 1 });
@@ -93,8 +56,8 @@ export class App extends Component {
     }));
   };
 
-  handleModalLargeImage = imgLarg => {
-    this.setState({ modalImage: imgLarg });
+  handleModalLargeImage = largeImageURL => {
+    this.setState({ largeImageURL });
   };
 
   render() {
@@ -107,9 +70,9 @@ export class App extends Component {
           openModal={this.toogleModal}
           handleModalLargeImage={this.handleModalLargeImage}
         />
-        {this.state.images && this.state.images.length > 0 && (
-          <Button handleClick={this.loadMore} />
-        )}
+        {this.state.images &&
+          this.state.images.length > 0 &&
+          this.state.isShowButton && <Button handleClick={this.loadMore} />}
         {this.state.isShowModal && (
           <Modal
             openModal={this.toogleModal}

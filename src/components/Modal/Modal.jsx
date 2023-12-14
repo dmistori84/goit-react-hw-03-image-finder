@@ -13,12 +13,11 @@ export class Modal extends Component {
   handleClose = e => {
     if (e.code === 'Escape' || e.currentTarget === e.target)
       this.props.openModal();
-    console.log('bla');
   };
 
   render() {
     return (
-      <div className={css.Overlay} onClick={this.props.openModal}>
+      <div className={css.Overlay} onClick={this.handleClose}>
         <div className={css.Modal}>
           <img src={this.props.largeImageURL} alt="" />
         </div>

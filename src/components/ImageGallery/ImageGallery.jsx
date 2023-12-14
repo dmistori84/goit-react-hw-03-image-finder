@@ -16,8 +16,8 @@ export const ImageGallery = ({
           images.map(image => {
             return (
               <ImageGalleryItem
-                images={image}
                 key={image.id}
+                images={image}
                 openModal={openModal}
                 handleModalLargeImage={handleModalLargeImage}
                 largeImageURL={image.largeImageURL}
