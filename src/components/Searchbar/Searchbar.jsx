@@ -14,6 +14,7 @@ export class Searchbar extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    if (!this.state.value.trim()) return alert('Can not be empty');
     this.props.onSubmit(this.state.value);
     this.setState({ value: '' });
   };
